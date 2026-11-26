@@ -1,0 +1,13 @@
+const TABLE=(()=>{const t=new Uint32Array(256);for(let n=0;n<256;n++){let v=n;for(let k=0;k<8;k++)v=(v&1)?0xedb88320^(v>>>1):v>>>1;t[n]=v>>>0}return t})();
+export function crc32(input){const bytes=input instanceof Uint8Array?input:new Uint8Array(input);let v=0xffffffff;for(const b of bytes)v=TABLE[(v^b)&255]^(v>>>8);return(v^0xffffffff)>>>0}
+export function safeArchiveName(value,fallback="sticker-pack"){const name=String(value??"").normalize("NFKD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9_-]+/g,"-").replace(/^-+|-+$/g,"").slice(0,48);return name||fallback}
+const w16=(v,o,n)=>v.setUint16(o,n,true),w32=(v,o,n)=>v.setUint32(o,n>>>0,true);
+export async function createZip(entries,timestamp=new Date()){
+ if(!Array.isArray(entries)||entries.length<1||entries.length>100)throw new RangeError("Archive must contain 1-100 entries.");
+ const enc=new TextEncoder(),local=[],central=[],seen=new Set();let offset=0;
+ const year=Math.max(1980,Math.min(2107,timestamp.getFullYear())),time=(timestamp.getHours()<<11)|(timestamp.getMinutes()<<5)|Math.floor(timestamp.getSeconds()/2),date=((year-1980)<<9)|((timestamp.getMonth()+1)<<5)|timestamp.getDate();
+ for(const entry of entries){const name=String(entry.name??"");if(!name||name.startsWith("/")||name.includes("..")||name.includes("\\")||name.length>240||seen.has(name))throw new TypeError("Invalid or duplicate archive entry name.");seen.add(name);const nb=enc.encode(name),data=entry.data instanceof Blob?new Uint8Array(await entry.data.arrayBuffer()):entry.data instanceof Uint8Array?entry.data:enc.encode(String(entry.data??""));if(data.length>0xffffffff)throw new RangeError("Entry too large.");const crc=crc32(data);
+ const h=new Uint8Array(30+nb.length),v=new DataView(h.buffer);w32(v,0,0x04034b50);w16(v,4,20);w16(v,6,0x0800);w16(v,8,0);w16(v,10,time);w16(v,12,date);w32(v,14,crc);w32(v,18,data.length);w32(v,22,data.length);w16(v,26,nb.length);w16(v,28,0);h.set(nb,30);local.push(h,data);
+ const c=new Uint8Array(46+nb.length),cv=new DataView(c.buffer);w32(cv,0,0x02014b50);w16(cv,4,20);w16(cv,6,20);w16(cv,8,0x0800);w16(cv,10,0);w16(cv,12,time);w16(cv,14,date);w32(cv,16,crc);w32(cv,20,data.length);w32(cv,24,data.length);w16(cv,28,nb.length);w16(cv,30,0);w16(cv,32,0);w16(cv,34,0);w16(cv,36,0);w32(cv,38,0);w32(cv,42,offset);c.set(nb,46);central.push(c);offset+=h.length+data.length}
+ const cdSize=central.reduce((s,p)=>s+p.length,0);if(offset+cdSize>0xffffffff)throw new RangeError("Archive too large for ZIP32.");const end=new Uint8Array(22),ev=new DataView(end.buffer);w32(ev,0,0x06054b50);w16(ev,4,0);w16(ev,6,0);w16(ev,8,entries.length);w16(ev,10,entries.length);w32(ev,12,cdSize);w32(ev,16,offset);w16(ev,20,0);return new Blob([...local,...central,end],{type:"application/zip"})
+}
