@@ -2,7 +2,7 @@
 
 A local-first web editor for preparing short video clips with audio and exporting a portable ZIP archive. This is the iOS alternative to a native App Store app.
 
-**Live site after GitHub Pages is enabled:** https://erikraft.github.io/WA-Audio-Stickers-iOS/
+**Live site:** https://sticker-ios.erikraft.com/
 
 ## Features
 
@@ -14,6 +14,10 @@ A local-first web editor for preparing short video clips with audio and exportin
 - Use the iOS Share Sheet when it supports files; otherwise download the result.
 - Process selected media in the browser; files are not uploaded to a server.
 
+## Native Android companion
+
+For Android, see [ErikrafT Sound Stickers for Android](https://github.com/erikraft/WA-Audio-Stickers-Android). It is a separate native Kotlin application with its editor bundled locally in the Android app. This repository is the browser-based edition for iPhone, iPad and desktop; it is not an App Store binary.
+
 ## WhatsApp compatibility
 
 The generated ZIP is an **archive/export package**, not a native WhatsApp sticker pack. The public third-party sticker integration documents WebP sticker assets and a metadata ContentProvider; it does not document a public API for importing a sound-sticker package with linked audio.
@@ -24,7 +28,7 @@ Browser recording support differs. The app checks MediaRecorder MIME support at 
 
 ## Browser extension from another author
 
-For the extension workflow that integrates with WhatsApp Web, see [vish-4-1/WA-audio-stickers-en](https://github.com/vish-4-1/WA-audio-stickers-en). **That extension is not created, maintained, owned or officially affiliated with ErikrafT.** Its README credits an upstream project and the repository is licensed under PolyForm Noncommercial 1.0.0. This repository does not copy or bundle its source code.
+For the extension workflow that integrates with WhatsApp Web, see the independent project [vish-4-1/WA-audio-stickers-en](https://github.com/vish-4-1/WA-audio-stickers-en). **This is not an ErikrafT repository: the extension is not created, maintained, owned or officially affiliated with ErikrafT.** Its README credits an upstream project and the repository is licensed under PolyForm Noncommercial 1.0.0. This repository does not copy or bundle its source code.
 
 ## Development
 
