@@ -1,0 +1,5 @@
+import test from "node:test";import assert from "node:assert/strict";import{crc32,createZip,safeArchiveName}from"../src/zip.js";
+test("CRC32 uses the ZIP test vector",()=>assert.equal(crc32(new TextEncoder().encode("123456789")),0xcbf43926));
+test("archive names are normalized and bounded",()=>{assert.equal(safeArchiveName("Meu Pacote Áudio!"),"meu-pacote-audio");assert.equal(safeArchiveName("!!!"),"sticker-pack");assert.ok(safeArchiveName("A".repeat(100)).length<=48)});
+test("ZIP contains local header and end record",async()=>{const z=await createZip([{name:"hello.txt",data:"hello"}],new Date("2026-01-01T00:00:00Z"));const b=new Uint8Array(await z.arrayBuffer()),v=new DataView(b.buffer);assert.equal(v.getUint32(0,true),0x04034b50);assert.equal(v.getUint32(b.length-22,true),0x06054b50);assert.equal(v.getUint16(b.length-12,true),1);assert.equal(new TextDecoder().decode(b.slice(39,44)),"hello")});
+test("ZIP rejects path traversal and duplicate names",async()=>{await assert.rejects(createZip([{name:"../escape.txt",data:"x"}]),/Invalid or duplicate/);await assert.rejects(createZip([{name:"same.txt",data:"a"},{name:"same.txt",data:"b"}]),/Invalid or duplicate/)});
