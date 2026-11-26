@@ -47,4 +47,4 @@ $("audioSeek").addEventListener("input",()=>{if(Number.isFinite(player.duration)
 $("volume").addEventListener("input",()=>{player.volume=Number($("volume").value);player.muted=player.volume===0;syncPlayer()});$("muteAudio").addEventListener("click",()=>{player.muted=!player.muted;syncPlayer()});
 ["timeupdate","loadedmetadata","play","pause","ended","volumechange"].forEach(e=>player.addEventListener(e,syncPlayer));
 window.addEventListener("beforeunload",revoke);renderPack();drawWave();updateRange();
-if("serviceWorker"in navigator&&location.protocol==="https:")addEventListener("load",()=>navigator.serviceWorker.register("/WA-Audio-Stickers-iOS/sw.js").catch(()=>{}),{once:true});
+if("serviceWorker"in navigator&&location.protocol==="https:")addEventListener("load",()=>navigator.serviceWorker.register(import.meta.env.BASE_URL + "sw.js", { scope: import.meta.env.BASE_URL }).catch(()=>{}),{once:true});
