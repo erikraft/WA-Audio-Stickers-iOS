@@ -1,5 +1,5 @@
 const CACHE_PREFIX = "erikraft-sound-stickers-";
-const CACHE_NAME = `${CACHE_PREFIX}v2`;
+const CACHE_NAME = `${CACHE_PREFIX}v3`;
 const APP_BASE = new URL("./", self.location.href);
 const PRECACHE = ["", "index.html", "manifest.webmanifest", "icon.svg"]
   .map((path) => new URL(path, APP_BASE).href);
