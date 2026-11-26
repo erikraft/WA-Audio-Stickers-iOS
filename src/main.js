@@ -1,4 +1,4 @@
-import{createZip,safeArchiveName}from"./zip.js";import"./styles.css";
+import{createZip,safeArchiveName}from"./zip.js";
 const $=id=>document.getElementById(id),MAX=10,MAX_ITEMS=30,MAX_BYTES=150*1024*1024;
 const s={media:null,mediaUrl:null,kind:null,audio:null,audioUrl:null,duration:0,pack:[]},video=$("videoPreview"),image=$("imagePreview"),player=$("audioPreview"),wave=$("waveform"),ctx=wave.getContext("2d");
 function toast(message,error=false){const el=document.createElement("div");el.className="toast"+(error?" error":"");el.textContent=message;$("toast").append(el);requestAnimationFrame(()=>el.classList.add("visible"));setTimeout(()=>{el.classList.remove("visible");setTimeout(()=>el.remove(),220)},3500)}
